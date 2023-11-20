@@ -1,9 +1,11 @@
 package com.unit.sivo.models;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -34,5 +36,12 @@ public class Aluno extends BaseEntity {
     private int periodo;
     
     @ManyToMany
-    private List<Projeto> projetos;
+    private Set<Projeto> projetos;
+
+    @ManyToMany
+    @JoinTable(
+      name = "tb_aluno_disciplinas", 
+      joinColumns = @JoinColumn(name = "aluno_id", referencedColumnName = "id"), 
+      inverseJoinColumns = @JoinColumn(name = "disciplina_id", referencedColumnName = "id"))
+    private Set<Disciplina> disciplinas;
 }

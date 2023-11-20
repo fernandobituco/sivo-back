@@ -1,6 +1,7 @@
 package com.unit.sivo.controllers;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +14,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.unit.sivo.models.Disciplina;
 import com.unit.sivo.models.Professor;
+import com.unit.sivo.repositories.DisciplinaRepository;
 import com.unit.sivo.repositories.ProfessorRepository;
 import com.unit.sivo.viewModels.LoginViewModel;
+import com.unit.sivo.viewModels.ProfessorViewModel;
 
 @RestController
 @RequestMapping("/api/professor")
 @CrossOrigin
 public class ProfessorController {
     private final ProfessorRepository repository;
+    private final DisciplinaRepository disciplinaRepository;
 
-    public ProfessorController(ProfessorRepository repository) {
+
+    public ProfessorController(ProfessorRepository repository, DisciplinaRepository disciplinaRepository) {
         this.repository = repository;
+        this.disciplinaRepository = disciplinaRepository;
     }
 
     @GetMapping
@@ -34,8 +41,14 @@ public class ProfessorController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody Professor professor) {
-        Professor novoProfessor = repository.save(professor);
+    public ResponseEntity<Object> add(@RequestBody ProfessorViewModel professor) {
+        Professor novoProfessor = new Professor();
+        List<Disciplina> disciplinas = new ArrayList<Disciplina>();
+        for (int dId : professor.getDisciplinas()) {
+            disciplinas.add(disciplinaRepository.getById(dId));
+        }
+        novoProfessor.setDisciplinas(disciplinas);
+        novoProfessor = repository.save(novoProfessor);
         return new ResponseEntity<>(novoProfessor, HttpStatus.OK);
     }
 

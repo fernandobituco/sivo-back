@@ -1,11 +1,14 @@
 package com.unit.sivo.models;
 
-import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -16,9 +19,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Professor extends BaseEntity {
-    
-    @Column(name = "nome")
-    private String nome;
     
     @Column(name = "email")
     private String email;
@@ -31,5 +31,12 @@ public class Professor extends BaseEntity {
 
     @OneToMany(mappedBy = "professor")
     @JsonManagedReference
-    private List<Projeto> projetos;
+    private Set<Projeto> projetos;
+
+    @ManyToMany
+    @JoinTable(
+      name = "tb_professor_disciplinas", 
+      joinColumns = @JoinColumn(name = "professor_id", referencedColumnName = "id"), 
+      inverseJoinColumns = @JoinColumn(name = "disciplina_id", referencedColumnName = "id"))
+    private Set<Disciplina> disciplinas;
 }

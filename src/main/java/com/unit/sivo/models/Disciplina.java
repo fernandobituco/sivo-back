@@ -1,9 +1,9 @@
 package com.unit.sivo.models;
 
+import java.util.Set;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
@@ -15,10 +15,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Disciplina extends BaseEntity {
-    
-    @Column(name = "nome")
-    private String nome;
 
-    @ManyToMany
-    private List<Projeto> projetos;
+    @ManyToMany(mappedBy = "disciplinas")
+    private Set<Professor> professores;
+
+    @ManyToMany(mappedBy = "disciplinas")
+    private Set<Aluno> alunos;
+
+    @ManyToMany(mappedBy = "disciplinas")
+    private Set<Projeto> projetos;
+
+    @ManyToMany(mappedBy = "disciplinas")
+    @JsonIgnore
+    private Set<Curso> cursos;
 }
