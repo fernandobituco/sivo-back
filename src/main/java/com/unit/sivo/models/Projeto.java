@@ -1,12 +1,14 @@
 package com.unit.sivo.models;
 
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -37,9 +39,17 @@ public class Projeto extends BaseEntity {
     private Professor professor;
 
     @ManyToMany
-    private List<Disciplina> disciplinas;
+    @JoinTable(
+      name = "tb_projeto_disciplinas", 
+      joinColumns = @JoinColumn(name = "projeto_id", referencedColumnName = "id"), 
+      inverseJoinColumns = @JoinColumn(name = "disciplina_id", referencedColumnName = "id"))
+    private Set<Disciplina> disciplinas;
 
     @ManyToMany
-    private List<Aluno> alunos;
+    @JoinTable(
+      name = "tb_projeto_alunos", 
+      joinColumns = @JoinColumn(name = "projeto_id", referencedColumnName = "id"), 
+      inverseJoinColumns = @JoinColumn(name = "aluno_id", referencedColumnName = "id"))
+    private Set<Aluno> alunos;
     
 }
