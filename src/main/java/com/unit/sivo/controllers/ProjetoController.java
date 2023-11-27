@@ -51,6 +51,18 @@ public class ProjetoController {
         return new ResponseEntity<>(projeto, HttpStatus.OK);
     }
 
+    @GetMapping("/professor/{id}")
+    public ResponseEntity<Object> getByProfessorId(@PathVariable int id) {
+        List<Projeto> projetos = repository.getByProfessorId(id);
+        return new ResponseEntity<>(projetos, HttpStatus.OK);
+    }
+
+    @GetMapping("/aluno/{id}")
+    public ResponseEntity<Object> getByAlunosId(@PathVariable int id) {
+        List<Projeto> projetos = repository.getByAlunosId(id);
+        return new ResponseEntity<>(projetos, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Object> add(@RequestBody ProjetoViewModel projeto) {
         Projeto novoProjeto = new Projeto(projeto);
@@ -100,6 +112,15 @@ public class ProjetoController {
             } else {
                 projeto.addAluno(aluno);
             }
+            repository.save(projeto);
+            return new ResponseEntity<>(projeto, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/{situacao}") ResponseEntity<Object> updateSituation(
+        @PathVariable int id,
+        @PathVariable int situacao) {
+            Projeto projeto = repository.getById(id);
+            projeto.setSituacao(situacao);
             repository.save(projeto);
             return new ResponseEntity<>(projeto, HttpStatus.OK);
     }

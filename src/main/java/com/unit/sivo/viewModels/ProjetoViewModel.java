@@ -2,8 +2,6 @@ package com.unit.sivo.viewModels;
 
 import java.util.List;
 
-import com.unit.sivo.enums.SituacaoProjeto;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +14,7 @@ public class ProjetoViewModel {
 
     private String cronograma;
 
-    private SituacaoProjeto situacao;
+    private int situacao;
 
     private int professor_id;
 

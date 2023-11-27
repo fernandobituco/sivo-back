@@ -1,12 +1,9 @@
 package com.unit.sivo.models;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.unit.sivo.enums.SituacaoProjeto;
 import com.unit.sivo.viewModels.ProjetoViewModel;
 
 import jakarta.persistence.Column;
@@ -37,11 +34,15 @@ public class Projeto extends BaseEntity {
     private String cronograma;
     
     @Column(name = "situacao")
-    private SituacaoProjeto situacao;
+    private int situacao;
     
     @Column(name = "vagas")
     private int vagas;
     
+    // 1 = ABERTO
+    // 2 = INICIADO
+    // 3 = ENCERRADO
+    // 4 = CANCELADO
     @Column(name = "duracao")
     private int duracao;
 
@@ -89,5 +90,6 @@ public class Projeto extends BaseEntity {
       this.duracao = projeto.getDuracao();
       this.disciplinas = new HashSet<Disciplina>();
       this.alunos = new HashSet<Aluno>();
+      this.situacao = 1;  
     }
 }

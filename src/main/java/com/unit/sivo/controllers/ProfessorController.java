@@ -32,7 +32,6 @@ public class ProfessorController {
     private final ProfessorRepository repository;
     private final DisciplinaRepository disciplinaRepository;
 
-
     public ProfessorController(ProfessorRepository repository, DisciplinaRepository disciplinaRepository) {
         this.repository = repository;
         this.disciplinaRepository = disciplinaRepository;
@@ -47,14 +46,17 @@ public class ProfessorController {
     @PostMapping
     public ResponseEntity<Object> add(@RequestBody ProfessorViewModel professor) {
         Professor novoProfessor = new Professor(professor);
-        for (int disciplinaId : professor.getDisciplinas()) {
-            novoProfessor.addDisciplina(disciplinaRepository.getById(disciplinaId));
+        if (professor.getDisciplinas() != null) {
+            for (int disciplinaId : professor.getDisciplinas()) {
+                novoProfessor.addDisciplina(disciplinaRepository.getById(disciplinaId));
+            }
         }
         novoProfessor = repository.save(novoProfessor);
         return new ResponseEntity<>(novoProfessor, HttpStatus.OK);
     }
 
-    @PutMapping ResponseEntity<Object> update(@RequestBody ProfessorViewModel novoProfessor) {
+    @PutMapping
+    ResponseEntity<Object> update(@RequestBody ProfessorViewModel novoProfessor) {
         Professor professor = repository.getById(novoProfessor.getId());
         professor.setEmail(novoProfessor.getEmail());
         professor.setMatricula(novoProfessor.getMatricula());
@@ -64,10 +66,11 @@ public class ProfessorController {
         return new ResponseEntity<>(novoProfessor, HttpStatus.OK);
     }
 
-    @DeleteMapping ResponseEntity<Object> delete(int id) {
+    @DeleteMapping
+    ResponseEntity<Object> delete(int id) {
         Professor professor = repository.getById(id);
         repository.delete(professor);
-        
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -77,21 +80,22 @@ public class ProfessorController {
         if (professor != null && professor.getSenha().equals(login.getSenha())) {
             return new ResponseEntity<>(professor, HttpStatus.OK);
         } else {
-        return new ResponseEntity<>(login, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(login, HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping("/{id}/disciplina/{disciplinaId}") ResponseEntity<Object> addDisciplinas(
-        @PathVariable int id,
-        @PathVariable int disciplinaId) {
-            Professor professor = repository.getById(id);
-            Disciplina disciplina = disciplinaRepository.getById(disciplinaId);
-            if (professor.getDisciplinas().contains(disciplina)) {
-                professor.removeDisciplina(disciplina);
-            } else {
-                professor.addDisciplina(disciplina);
-            }
-            repository.save(professor);
-            return new ResponseEntity<>(professor, HttpStatus.OK);
+    @PutMapping("/{id}/disciplina/{disciplinaId}")
+    ResponseEntity<Object> addDisciplinas(
+            @PathVariable int id,
+            @PathVariable int disciplinaId) {
+        Professor professor = repository.getById(id);
+        Disciplina disciplina = disciplinaRepository.getById(disciplinaId);
+        if (professor.getDisciplinas().contains(disciplina)) {
+            professor.removeDisciplina(disciplina);
+        } else {
+            professor.addDisciplina(disciplina);
+        }
+        repository.save(professor);
+        return new ResponseEntity<>(professor, HttpStatus.OK);
     }
 }
