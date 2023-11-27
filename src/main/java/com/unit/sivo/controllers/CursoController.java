@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.unit.sivo.models.Aluno;
 import com.unit.sivo.models.Curso;
 import com.unit.sivo.models.Disciplina;
+import com.unit.sivo.repositories.AlunoRepository;
 import com.unit.sivo.repositories.CursoRepository;
 import com.unit.sivo.repositories.DisciplinaRepository;
 import com.unit.sivo.viewModels.CursoViewModel;
@@ -27,10 +29,12 @@ import com.unit.sivo.viewModels.CursoViewModel;
 public class CursoController {
     private final CursoRepository repository;
     private final DisciplinaRepository disciplinaRepository;
+    private final AlunoRepository alunoRepository;
 
-    public CursoController(CursoRepository repository, DisciplinaRepository disciplinaRepository) {
+    public CursoController(CursoRepository repository, DisciplinaRepository disciplinaRepository, AlunoRepository alunoRepository) {
         this.repository = repository;
         this.disciplinaRepository = disciplinaRepository;
+        this.alunoRepository = alunoRepository;
     }
 
     @GetMapping
@@ -42,6 +46,9 @@ public class CursoController {
     @PostMapping
     public ResponseEntity<Object> add(@RequestBody CursoViewModel curso) {
         Curso novoCurso = new Curso(curso);
+        for (int disciplinaId : curso.getDisciplinas()) {
+            novoCurso.addDisciplina(disciplinaRepository.getById(disciplinaId));
+        }
         novoCurso = repository.save(novoCurso);
         return new ResponseEntity<>(novoCurso, HttpStatus.OK);
     }

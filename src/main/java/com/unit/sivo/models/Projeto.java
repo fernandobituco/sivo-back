@@ -1,9 +1,13 @@
 package com.unit.sivo.models;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.unit.sivo.enums.SituacaoProjeto;
+import com.unit.sivo.viewModels.ProjetoViewModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,12 +17,14 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "tb_projeto")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Projeto extends BaseEntity {
     
     @Column(name = "nome")
@@ -30,12 +36,18 @@ public class Projeto extends BaseEntity {
     @Column(name = "cronograma")
     private String cronograma;
     
-    @Column(name = "ativo")
-    private boolean ativo;
+    @Column(name = "situacao")
+    private SituacaoProjeto situacao;
+    
+    @Column(name = "vagas")
+    private int vagas;
+    
+    @Column(name = "duracao")
+    private int duracao;
 
     @ManyToOne
     @JoinColumn(name="professor_id", nullable=false)
-    @JsonBackReference
+    @JsonManagedReference
     private Professor professor;
 
     @ManyToMany
@@ -51,5 +63,31 @@ public class Projeto extends BaseEntity {
       joinColumns = @JoinColumn(name = "projeto_id", referencedColumnName = "id"), 
       inverseJoinColumns = @JoinColumn(name = "aluno_id", referencedColumnName = "id"))
     private Set<Aluno> alunos;
-    
+
+    public void addDisciplina(Disciplina disciplina) {
+      this.disciplinas.add(disciplina);
+    }
+
+    public void removeAluno(Aluno aluno) {
+      this.alunos.remove(aluno);
+    }
+
+    public void addAluno(Aluno aluno) {
+      this.alunos.add(aluno);
+    }
+
+    public void removeDisciplina(Disciplina disciplina) {
+      this.disciplinas.remove(disciplina);
+    }
+
+    public Projeto(ProjetoViewModel projeto) {
+      this.nome = projeto.getNome();
+      this.descricao = projeto.getDescricao();
+      this.cronograma = projeto.getCronograma();
+      this.situacao = projeto.getSituacao();
+      this.vagas = projeto.getVagas();
+      this.duracao = projeto.getDuracao();
+      this.disciplinas = new HashSet<Disciplina>();
+      this.alunos = new HashSet<Aluno>();
+    }
 }

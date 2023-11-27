@@ -17,12 +17,15 @@ import lombok.Setter;
 public class Disciplina extends BaseEntity {
 
     @ManyToMany(mappedBy = "disciplinas")
+    @JsonIgnore
     private Set<Professor> professores;
 
     @ManyToMany(mappedBy = "disciplinas")
+    @JsonIgnore
     private Set<Aluno> alunos;
 
     @ManyToMany(mappedBy = "disciplinas")
+    @JsonIgnore
     private Set<Projeto> projetos;
 
     @ManyToMany(mappedBy = "disciplinas")

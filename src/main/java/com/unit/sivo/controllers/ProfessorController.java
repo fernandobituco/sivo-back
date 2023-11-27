@@ -1,19 +1,23 @@
 package com.unit.sivo.controllers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.unit.sivo.models.Curso;
 import com.unit.sivo.models.Disciplina;
 import com.unit.sivo.models.Professor;
 import com.unit.sivo.repositories.DisciplinaRepository;
@@ -42,17 +46,15 @@ public class ProfessorController {
 
     @PostMapping
     public ResponseEntity<Object> add(@RequestBody ProfessorViewModel professor) {
-        Professor novoProfessor = new Professor();
-        List<Disciplina> disciplinas = new ArrayList<Disciplina>();
-        for (int dId : professor.getDisciplinas()) {
-            disciplinas.add(disciplinaRepository.getById(dId));
+        Professor novoProfessor = new Professor(professor);
+        for (int disciplinaId : professor.getDisciplinas()) {
+            novoProfessor.addDisciplina(disciplinaRepository.getById(disciplinaId));
         }
-        novoProfessor.setDisciplinas(disciplinas);
         novoProfessor = repository.save(novoProfessor);
         return new ResponseEntity<>(novoProfessor, HttpStatus.OK);
     }
 
-    @PutMapping ResponseEntity<Object> update(@RequestBody Professor novoProfessor) {
+    @PutMapping ResponseEntity<Object> update(@RequestBody ProfessorViewModel novoProfessor) {
         Professor professor = repository.getById(novoProfessor.getId());
         professor.setEmail(novoProfessor.getEmail());
         professor.setMatricula(novoProfessor.getMatricula());
@@ -77,5 +79,19 @@ public class ProfessorController {
         } else {
         return new ResponseEntity<>(login, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PutMapping("/{id}/disciplina/{disciplinaId}") ResponseEntity<Object> addDisciplinas(
+        @PathVariable int id,
+        @PathVariable int disciplinaId) {
+            Professor professor = repository.getById(id);
+            Disciplina disciplina = disciplinaRepository.getById(disciplinaId);
+            if (professor.getDisciplinas().contains(disciplina)) {
+                professor.removeDisciplina(disciplina);
+            } else {
+                professor.addDisciplina(disciplina);
+            }
+            repository.save(professor);
+            return new ResponseEntity<>(professor, HttpStatus.OK);
     }
 }
